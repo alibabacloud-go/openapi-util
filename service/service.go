@@ -417,8 +417,17 @@ func handleRepeatedParams(repeatedFieldValue reflect.Value, result map[string]*s
 			if fieldValue.Kind().String() == "map" {
 				handleMap(fieldValue, result, key)
 			} else {
-				result[key] = tea.String(fmt.Sprintf("%v", fieldValue.Interface()))
+				v := reflect.ValueOf(fieldValue)
+				if v.IsValid() && !v.IsZero() {
+					// 对非空的反射值进行操作
+					result[key] = tea.String(fmt.Sprintf("%v", fieldValue.Interface()))
+					// ...
+				} else {
+					continue
+					// 处理空的反射值
+				}
 			}
+
 		}
 	}
 }
